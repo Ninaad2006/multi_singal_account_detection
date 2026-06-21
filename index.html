@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueCheck — Fake Account Detector</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f5f0;
+            --green: #1db954;
+            --green-dark: #169c44;
+            --pink: #f4c2d0;
+            --blue: #b8d4f0;
+            --yellow: #f5e46a;
+            --red-card: #f2a49a;
+            --gray: #e8e8e3;
+            --gray-dark: #888880;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--white);
+            color: var(--black);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 48px;
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--black);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--black);
+        }
+
+        .nav-cta {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .nav-cta:hover {
+            background: #222;
+            transform: scale(1.02);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 80px 48px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray);
+            border-radius: 100px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            color: var(--gray-dark);
+        }
+
+        .hero-tag span {
+            color: var(--black);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(56px, 8vw, 100px);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -3px;
+            margin-bottom: 32px;
+            max-width: 800px;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 em::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--green);
+            border-radius: 3px;
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: var(--gray-dark);
+            max-width: 480px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green);
+            color: var(--black);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+            color: white;
+            transform: scale(1.03);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--black);
+            border: 1.5px solid rgba(0, 0, 0, 0.2);
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--black);
+            background: var(--black);
+            color: white;
+        }
+
+        /* ── STATS ROW ── */
+        .stats-row {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin: 60px 48px;
+        }
+
+        .stat-item {
+            flex: 1;
+            padding: 32px 40px;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-dark);
+            font-weight: 400;
+        }
+
+        /* ── ANALYZER SECTION ── */
+        .analyzer-section {
+            padding: 0 48px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-tag {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-tag::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 5vw, 60px);
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 40px;
+        }
+
+        /* ── PLATFORM TABS ── */
+        .platform-tabs {
+            display: inline-flex;
+            background: var(--gray);
+            border-radius: 100px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 100px;
+            border: none;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray-dark);
+        }
+
+        .tab-btn.active {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* ── SEARCH BOX ── */
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+            max-width: 680px;
+        }
+
+        .search-input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-prefix {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-dark);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 18px 16px 32px;
+            border: 1.5px solid rgba(0, 0, 0, 0.15);
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            background: white;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: var(--black);
+        }
+
+        .search-input:focus {
+            border-color: var(--black);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .search-input::placeholder {
+            color: #aaa;
+        }
+
+        .analyze-btn {
+            background: var(--green);
+            color: var(--black);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .analyze-btn:hover {
+            background: var(--green-dark);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        /* ── LOADING ── */
+        .loading-bar {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: var(--gray-dark);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray);
+            border-top-color: var(--black);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── RESULT CARD ── */
+        .result-container {
+            display: none;
+        }
+
+        .result-hero-card {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 32px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.4s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-hero-card.real {
+            background: #d4f5e0;
+        }
+
+        .result-hero-card.fake {
+            background: #fde8e8;
+        }
+
+        .result-hero-card.warning {
+            background: var(--yellow);
+        }
+
+        .result-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .result-avatar-placeholder {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .result-main {
+            flex: 1;
+        }
+
+        .result-verdict {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+
+        .result-username {
+            font-size: 15px;
+            color: rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .result-confidence {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.08);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* ── RISK METER ── */
+        .risk-meter-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 16px;
+            animation: fadeUp 0.4s ease 0.1s both;
+        }
+
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .risk-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .risk-badge {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+        }
+
+        .risk-badge.low {
+            background: #d4f5e0;
+            color: #0a5c2a;
+        }
+
+        .risk-badge.medium {
+            background: #fff3cd;
+            color: #7a5000;
+        }
+
+        .risk-badge.high {
+            background: #fde8e8;
+            color: #7a1010;
+        }
+
+        .risk-track {
+            background: var(--gray);
+            border-radius: 100px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .risk-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--gray-dark);
+        }
+
+        /* ── INFO GRID ── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            animation: fadeUp 0.4s ease 0.15s both;
+        }
+
+        .info-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .info-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-dark);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row-label {
+            color: var(--gray-dark);
+        }
+
+        .info-row-value {
+            font-weight: 600;
+        }
+
+        /* ── ANALYSIS CARDS ── */
+        .analysis-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            animation: fadeUp 0.4s ease 0.2s both;
+        }
+
+        .analysis-card {
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analysis-card.pink {
+            background: var(--pink);
+        }
+
+        .analysis-card.blue {
+            background: var(--blue);
+        }
+
+        .analysis-card.yellow {
+            background: var(--yellow);
+        }
+
+        .analysis-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        .analysis-card-value {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .analysis-card-icon {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            font-size: 28px;
+            opacity: 0.3;
+        }
+
+        /* ── SPAM METER ── */
+        .spam-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 16px;
+            animation: fadeUp 0.4s ease 0.25s both;
+        }
+
+        .spam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .spam-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .spam-track {
+            background: var(--gray);
+            border-radius: 100px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .spam-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 1s ease;
+        }
+
+        .spam-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .keyword-tag {
+            background: #fde8e8;
+            color: #7a1010;
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* ── CLONE + ACTIONS ROW ── */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            animation: fadeUp 0.4s ease 0.3s both;
+        }
+
+        .clone-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .clone-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .clone-verdict {
+            font-size: 14px;
+            color: var(--gray-dark);
+            margin-bottom: 8px;
+        }
+
+        .clone-signals {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .clone-signal {
+            font-size: 12px;
+            background: #fff3cd;
+            color: #7a5000;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(0, 0, 0, 0.12);
+            background: white;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: var(--black);
+            color: white;
+            border-color: var(--black);
+        }
+
+        .action-btn.monitor {
+            background: var(--green);
+            border-color: var(--green);
+            font-weight: 600;
+        }
+
+        .action-btn.monitor:hover {
+            background: var(--green-dark);
+        }
+
+        /* ── FEATURES SECTION ── */
+        .features-section {
+            padding: 80px 48px;
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .features-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-tag {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+        }
+
+        .features-title {
+            font-family: var(--font-display);
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 0.95;
+            margin-bottom: 60px;
+            max-width: 700px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            border-radius: 20px;
+            padding: 32px;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.02);
+        }
+
+        .feature-card.pink {
+            background: var(--pink);
+            color: var(--black);
+        }
+
+        .feature-card.blue {
+            background: var(--blue);
+            color: var(--black);
+        }
+
+        .feature-card.yellow {
+            background: var(--yellow);
+            color: var(--black);
+        }
+
+        .feature-card.dark {
+            background: #1a1a1a;
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .feature-card.green {
+            background: var(--green);
+            color: var(--black);
+        }
+
+        .feature-card.red {
+            background: var(--red-card);
+            color: var(--black);
+        }
+
+        .feature-card-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card-desc {
+            font-size: 13px;
+            opacity: 0.65;
+            line-height: 1.5;
+            max-width: 200px;
+        }
+
+        .feature-card-icon {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            font-size: 36px;
+            opacity: 0.25;
+        }
+
+        /* ── TOOLS ROW ── */
+        .tools-section {
+            padding: 80px 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .tool-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 28px;
+            transition: border-color 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            border-color: var(--black);
+            transform: translateY(-2px);
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        .tool-name {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .tool-desc {
+            font-size: 13px;
+            color: var(--gray-dark);
+            line-height: 1.5;
+        }
+
+        /* ── COMPARE SECTION ── */
+        .compare-section {
+            padding: 0 48px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .compare-box {
+            background: var(--gray);
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .compare-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .compare-input {
+            padding: 14px 20px;
+            border: 1.5px solid rgba(0, 0, 0, 0.12);
+            border-radius: 14px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            background: white;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        .compare-input:focus {
+            border-color: var(--black);
+        }
+
+        .compare-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--black);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .compare-btn:hover {
+            background: #333;
+        }
+
+        .compare-results {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .compare-result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        /* ── HISTORY ── */
+        .history-section {
+            padding: 0 48px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .stat-card-number {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+
+        .stat-card-label {
+            font-size: 12px;
+            color: var(--gray-dark);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.06);
+            border-radius: 14px;
+            padding: 14px 20px;
+            transition: border-color 0.15s;
+        }
+
+        .history-item:hover {
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .history-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .history-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .history-dot.real {
+            background: var(--green);
+        }
+
+        .history-dot.fake {
+            background: #e53935;
+        }
+
+        .history-username {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .history-platform {
+            font-size: 12px;
+            color: var(--gray-dark);
+        }
+
+        .history-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .history-risk {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: var(--gray-dark);
+        }
+
+        /* ── MONITOR ── */
+        .monitor-section {
+            padding: 0 48px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .monitor-box {
+            background: var(--black);
+            border-radius: 24px;
+            padding: 40px;
+            color: white;
+        }
+
+        .monitor-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .monitor-sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 28px;
+        }
+
+        .monitor-input-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .monitor-input {
+            flex: 1;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: white;
+            outline: none;
+        }
+
+        .monitor-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .monitor-input:focus {
+            border-color: var(--green);
+        }
+
+        .monitor-add-btn {
+            padding: 14px 28px;
+            background: var(--green);
+            color: var(--black);
+            border: none;
+            border-radius: 14px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .monitor-add-btn:hover {
+            background: var(--green-dark);
+            color: white;
+        }
+
+        .monitor-accounts {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .monitor-account-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 14px 20px;
+        }
+
+        .monitor-account-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .monitor-account-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .monitor-remove {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .monitor-remove:hover {
+            background: #e53935;
+            color: white;
+        }
+
+        /* ── ALERTS ── */
+        .alerts-list {
+            margin-top: 24px;
+        }
+
+        .alerts-title {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .alert-item {
+            background: rgba(255, 100, 100, 0.12);
+            border: 1px solid rgba(255, 100, 100, 0.2);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .alert-username {
+            font-weight: 600;
+            color: var(--red-card);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--black);
+            color: rgba(255, 255, 255, 0.4);
+            padding: 40px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+
+        /* ── UTILITIES ── */
+        .hidden {
+            display: none !important;
+        }
+
+        .warning-text {
+            color: #856404;
+        }
+
+        .error-card {
+            background: #fff3cd;
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 14px;
+            color: #7a5000;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+                letter-spacing: -2px;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                margin: 40px 20px;
+            }
+
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .analyzer-section,
+            .tools-section,
+            .compare-section,
+            .history-section,
+            .monitor-section {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .compare-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .bottom-row {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .features-section {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">
+            <div class="nav-logo-icon">🔍</div>
+            TrueCheck
+        </div>
+        <ul class="nav-links">
+            <li><a href="#analyzer">Analyze</a></li>
+            <li><a href="#compare">Compare</a></li>
+            <li><a href="#monitor">Monitor</a></li>
+            <li><a href="#history">History</a></li>
+        </ul>
+        <button class="nav-cta" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+            Start Detecting →
+        </button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-tag">
+            🛡️ AI-Powered · <span>90% Accuracy</span>
+        </div>
+        <h1>Detect <em>Fake</em><br>Accounts.</h1>
+        <p class="hero-sub">
+            Instantly analyze any Instagram or X account using machine learning, face detection, clone analysis, and
+            spam detection.
+        </p>
+        <div class="hero-actions">
+            <a href="#analyzer" class="btn-primary"
+                onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'}); return false;">
+                🔍 Analyze an Account
+            </a>
+            <a href="#features" class="btn-secondary"
+                onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;">
+                See How It Works
+            </a>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-number">90%</div>
+            <div class="stat-label">Detection Accuracy</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">65K+</div>
+            <div class="stat-label">Training Profiles</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">30+</div>
+            <div class="stat-label">Signal Features</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Platforms Supported</div>
+        </div>
+    </div>
+
+    <!-- ANALYZER -->
+    <section class="analyzer-section" id="analyzer">
+        <div class="section-tag">Fake Account Detector</div>
+        <h2 class="section-title">Analyze any<br>account instantly.</h2>
+
+        <div class="platform-tabs">
+            <button class="tab-btn active" id="tab-ig" onclick="switchPlatform('instagram')">📸 Instagram</button>
+            <button class="tab-btn" id="tab-x" onclick="switchPlatform('x')">𝕏 X / Twitter</button>
+        </div>
+
+        <div class="search-box">
+            <div class="search-input-wrap">
+                <span class="search-prefix">@</span>
+                <input type="text" class="search-input" id="username" placeholder="username"
+                    onkeydown="if(event.key==='Enter') analyze()">
+            </div>
+            <button class="analyze-btn" onclick="analyze()">Analyze →</button>
+        </div>
+
+        <div class="loading-bar" id="loading">
+            <div class="spinner"></div>
+            Analyzing account…
+        </div>
+
+        <div class="result-container" id="result-container">
+
+            <!-- HERO RESULT -->
+            <div class="result-hero-card" id="result-hero">
+                <div id="result-avatar-wrap"></div>
+                <div class="result-main">
+                    <div class="result-verdict" id="result-verdict"></div>
+                    <div class="result-username" id="result-username"></div>
+                    <div class="result-confidence" id="result-confidence"></div>
+                </div>
+            </div>
+
+            <!-- RISK METER -->
+            <div class="risk-meter-card">
+                <div class="risk-header">
+                    <div class="risk-title">Risk Score</div>
+                    <div class="risk-badge" id="risk-badge"></div>
+                </div>
+                <div class="risk-track">
+                    <div class="risk-fill" id="risk-fill" style="width:0%"></div>
+                </div>
+                <div class="risk-labels">
+                    <span>0 — Safe</span>
+                    <span id="risk-score-label"></span>
+                    <span>100 — Dangerous</span>
+                </div>
+            </div>
+
+            <!-- INFO GRID -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-card-label">Profile Info</div>
+                    <div class="info-row"><span class="info-row-label">👥 Followers</span><span class="info-row-value"
+                            id="inf-followers"></span></div>
+                    <div class="info-row"><span class="info-row-label">➡️ Following</span><span class="info-row-value"
+                            id="inf-following"></span></div>
+                    <div class="info-row"><span class="info-row-label">📸 Posts</span><span class="info-row-value"
+                            id="inf-posts"></span></div>
+                    <div class="info-row"><span class="info-row-label">📝 Bio Length</span><span class="info-row-value"
+                            id="inf-bio"></span></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Account Status</div>
+                    <div class="info-row"><span class="info-row-label">✔️ Verified</span><span class="info-row-value"
+                            id="inf-verified"></span></div>
+                    <div class="info-row"><span class="info-row-label">🖼️ Profile Pic</span><span
+                            class="info-row-value" id="inf-pic"></span></div>
+                    <div class="info-row"><span class="info-row-label">🔒 Private</span><span class="info-row-value"
+                            id="inf-private"></span></div>
+                    <div class="info-row"><span class="info-row-label">📅 Account Age</span><span class="info-row-value"
+                            id="inf-age"></span></div>
+                </div>
+            </div>
+
+            <!-- ANALYSIS CARDS -->
+            <div class="analysis-cards">
+                <div class="analysis-card pink">
+                    <div class="analysis-card-label">Face Detection</div>
+                    <div class="analysis-card-value" id="face-verdict"></div>
+                    <div class="analysis-card-icon">😊</div>
+                </div>
+                <div class="analysis-card blue">
+                    <div class="analysis-card-label">AI Image Check</div>
+                    <div class="analysis-card-value" id="ai-verdict"></div>
+                    <div class="analysis-card-icon">🤖</div>
+                </div>
+                <div class="analysis-card yellow">
+                    <div class="analysis-card-label">Clone Detection</div>
+                    <div class="analysis-card-value" id="clone-verdict"></div>
+                    <div class="analysis-card-icon">👥</div>
+                </div>
+            </div>
+
+            <!-- SPAM -->
+            <div class="spam-card">
+                <div class="spam-header">
+                    <div class="spam-title">Spam Analysis</div>
+                    <span id="spam-verdict" style="font-size:14px;"></span>
+                </div>
+                <div class="spam-track">
+                    <div class="spam-fill" id="spam-fill" style="width:0%"></div>
+                </div>
+                <div class="spam-keywords" id="spam-keywords"></div>
+            </div>
+
+            <!-- BOTTOM ROW -->
+            <div class="bottom-row">
+                <div class="clone-card">
+                    <div class="clone-title">Clone Signals</div>
+                    <div class="clone-verdict" id="clone-signals-text"></div>
+                    <div class="clone-signals" id="clone-signals-list"></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn monitor" onclick="addToMonitorFromResult()">👁️ Monitor</button>
+                    <button class="action-btn" onclick="showHistory()">📋 History</button>
+                    <button class="action-btn" onclick="showCompare()">⚖️ Compare</button>
+                    <button class="action-btn hidden" id="report-btn" onclick="reportAccount()" style="background:#e53935;color:white;border-color:#e53935;font-weight:600;">🚨 Report Account</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section" id="features">
+        <div class="features-inner">
+            <div class="features-tag">.Detection Features</div>
+            <h2 class="features-title">Everything you need<br>to stay safe.</h2>
+            <div class="features-grid">
+                <div class="feature-card pink">
+                    <div class="feature-card-title">ML Model</div>
+                    <div class="feature-card-desc">Random Forest trained on 65,000+ labeled profiles with 90% accuracy.
+                    </div>
+                    <div class="feature-card-icon">🧠</div>
+                </div>
+                <div class="feature-card blue">
+                    <div class="feature-card-title">Face Detection</div>
+                    <div class="feature-card-desc">OpenCV scans profile pictures for real human faces across 4 cascade
+                        models.</div>
+                    <div class="feature-card-icon">😊</div>
+                </div>
+                <div class="feature-card yellow">
+                    <div class="feature-card-title">AI Image Check</div>
+                    <div class="feature-card-desc">Detects AI-generated profile pictures using pixel analysis and neural
+                        networks.</div>
+                    <div class="feature-card-icon">🤖</div>
+                </div>
+                <div class="feature-card dark">
+                    <div class="feature-card-title">Clone Detection</div>
+                    <div class="feature-card-desc">Identifies copycat accounts using username patterns and bio
+                        similarity scoring.</div>
+                    <div class="feature-card-icon">👥</div>
+                </div>
+                <div class="feature-card green">
+                    <div class="feature-card-title">Spam Analysis</div>
+                    <div class="feature-card-desc">Scans bios for promo keywords, crypto scams, follow-for-follow
+                        signals and more.</div>
+                    <div class="feature-card-icon">🔍</div>
+                </div>
+                <div class="feature-card red">
+                    <div class="feature-card-title">Live Monitoring</div>
+                    <div class="feature-card-desc">Watch accounts 24/7 and get alerted when risk scores change
+                        significantly.</div>
+                    <div class="feature-card-icon">👁️</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section class="tools-section">
+        <div class="section-tag">More Tools</div>
+        <h2 class="section-title">Built for power users.</h2>
+        <div class="tools-grid">
+            <div class="tool-card" onclick="showCompare()">
+                <div class="tool-icon" style="background:#b8d4f0;">⚖️</div>
+                <div class="tool-name">Compare</div>
+                <div class="tool-desc">Analyze two accounts side by side and get a legitimacy verdict.</div>
+            </div>
+            <div class="tool-card" onclick="showHistory()">
+                <div class="tool-icon" style="background:#f4c2d0;">📋</div>
+                <div class="tool-name">History</div>
+                <div class="tool-desc">View all past analyses with statistics and fake/real breakdown.</div>
+            </div>
+            <div class="tool-card" onclick="showMonitor()">
+                <div class="tool-icon" style="background:#f5e46a;">👁️</div>
+                <div class="tool-name">Monitor</div>
+                <div class="tool-desc">Add accounts to a watchlist and get alerted on suspicious changes.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARE -->
+    <section class="compare-section" id="compare" style="display:none;">
+        <div class="section-tag">Compare Tool</div>
+        <h2 class="section-title">Side by side<br>comparison.</h2>
+        <div class="compare-box">
+            <div class="compare-inputs">
+                <input type="text" class="compare-input" id="compare-user1" placeholder="First username">
+                <input type="text" class="compare-input" id="compare-user2" placeholder="Second username">
+            </div>
+            <button class="compare-btn" onclick="runComparison()">⚖️ Compare Both Accounts →</button>
+            <div class="compare-results" id="compare-results" style="display:none;margin-top:20px;"></div>
+        </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="history-section" id="history" style="display:none;">
+        <div class="history-header">
+            <div>
+                <div class="section-tag">Analysis History</div>
+                <h2 class="section-title" style="font-size:40px;">Past analyses.</h2>
+            </div>
+            <button class="btn-secondary" onclick="clearHistory()" style="font-size:13px;padding:10px 20px;">🗑️ Clear
+                All</button>
+        </div>
+        <div class="stats-cards" id="stats-cards"></div>
+        <div class="history-list" id="history-list"></div>
+    </section>
+
+    <!-- MONITOR -->
+    <section class="monitor-section" id="monitor" style="display:none;">
+        <div class="section-tag">Real-Time Monitoring</div>
+        <h2 class="section-title">Watch accounts<br>24/7.</h2>
+        <div class="monitor-box">
+            <div class="monitor-title">Add to Watchlist</div>
+            <div class="monitor-sub">App checks every 30 minutes and alerts you of suspicious activity changes.</div>
+            <div class="monitor-input-row">
+                <input type="text" class="monitor-input" id="monitor-username" placeholder="@username to monitor">
+                <button class="monitor-add-btn" onclick="addToMonitor()">+ Add Account</button>
+            </div>
+            <div class="monitor-accounts" id="monitor-accounts"></div>
+            <div class="alerts-list" id="alerts-list"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">TrueCheck</div>
+        <div>Built with ML · OpenCV · Flask · RapidAPI</div>
+        <div>© 2026 TrueCheck</div>
+    </footer>
+
+    <script>
+        let currentPlatform = 'instagram';
+        let lastResult = null;
+
+        function switchPlatform(p) {
+            currentPlatform = p;
+            document.getElementById('tab-ig').className = 'tab-btn' + (p === 'instagram' ? ' active' : '');
+            document.getElementById('tab-x').className = 'tab-btn' + (p === 'x' ? ' active' : '');
+            document.getElementById('username').placeholder = p === 'instagram' ? 'username' : 'username';
+        }
+
+        async function analyze() {
+            const username = document.getElementById('username').value.trim().replace('@', '');
+            if (!username) { alert('Please enter a username!'); return; }
+
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('result-container').style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, platform: currentPlatform })
+                });
+                const result = await response.json();
+                document.getElementById('loading').style.display = 'none';
+
+                if (result.error) {
+                    document.getElementById('result-container').style.display = 'block';
+                    document.getElementById('result-container').innerHTML = '<div class="error-card">⚠️ ' + result.error + '</div>';
+                    return;
+                }
+
+                lastResult = result;
+                renderResult(result);
+            } catch (e) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result-container').style.display = 'block';
+                document.getElementById('result-container').innerHTML = '<div class="error-card">⚠️ Cannot connect to app. Make sure it\'s running at http://127.0.0.1:5002</div>';
+            }
+        }
+
+        function renderResult(r) {
+            const isFake = r.prediction === 'fake';
+            const isReal = r.prediction === 'real';
+
+            // Hero card
+            const hero = document.getElementById('result-hero');
+            hero.className = 'result-hero-card ' + r.prediction;
+
+            // Avatar
+            const avatarWrap = document.getElementById('result-avatar-wrap');
+            if (r.data.profile_pic_url) {
+                avatarWrap.innerHTML = '<img class="result-avatar" src="/proxy-image?url=' + encodeURIComponent(r.data.profile_pic_url) + '" alt="Profile" onerror="this.outerHTML=\'<div class=result-avatar-placeholder>👤</div>\'">';
+            } else {
+                avatarWrap.innerHTML = '<div class="result-avatar-placeholder">👤</div>';
+            }
+
+            document.getElementById('result-verdict').textContent = (isFake ? '🚨 Fake Account' : '✅ Real Account');
+            document.getElementById('result-username').textContent = '@' + r.data.username + ' · ' + r.platform;
+            document.getElementById('result-confidence').textContent = '⚡ ' + r.confidence + '% confidence';
+
+            // Risk meter
+            const riskScore = r.risk_score || 0;
+            const riskColor = riskScore >= 75 ? '#e53935' : riskScore >= 45 ? '#f59e0b' : '#1db954';
+            const riskFill = document.getElementById('risk-fill');
+            riskFill.style.background = riskColor;
+            setTimeout(() => { riskFill.style.width = riskScore + '%'; }, 100);
+            document.getElementById('risk-score-label').textContent = riskScore + '/100';
+
+            const badge = document.getElementById('risk-badge');
+            badge.textContent = r.risk_level || '';
+            badge.className = 'risk-badge ' + (riskScore >= 75 ? 'high' : riskScore >= 45 ? 'medium' : 'low');
+
+            // Info
+            document.getElementById('inf-followers').textContent = (r.data.followers || 0).toLocaleString();
+            document.getElementById('inf-following').textContent = (r.data.following || 0).toLocaleString();
+            document.getElementById('inf-posts').textContent = r.data.posts || r.data.tweets || 0;
+            document.getElementById('inf-bio').textContent = r.data.bio_length + ' chars';
+            document.getElementById('inf-verified').textContent = r.data.is_verified ? 'Yes ✅' : 'No ❌';
+            document.getElementById('inf-pic').textContent = r.data.has_pic ? 'Yes ✅' : 'No ❌';
+            document.getElementById('inf-private').textContent = (r.data.is_private || r.data.is_protected) ? 'Yes' : 'No';
+            document.getElementById('inf-age').textContent = r.data.account_age_str || (r.data.account_age_days ? Math.floor(r.data.account_age_days / 365) + 'y ' + Math.floor((r.data.account_age_days % 365) / 30) + 'm' : 'Unknown');
+
+            // Analysis cards
+            document.getElementById('face-verdict').textContent = r.face ? r.face.verdict : 'Not analyzed';
+            document.getElementById('ai-verdict').textContent = r.ai_image ? r.ai_image.verdict : 'Not analyzed';
+            document.getElementById('clone-verdict').textContent = r.clone ? r.clone.verdict : 'Not analyzed';
+
+            // Spam
+            const spamScore = r.spam ? r.spam.spam_score : 0;
+            const spamColor = spamScore >= 60 ? '#e53935' : spamScore >= 30 ? '#f59e0b' : '#1db954';
+            const spamFill = document.getElementById('spam-fill');
+            spamFill.style.background = spamColor;
+            setTimeout(() => { spamFill.style.width = spamScore + '%'; }, 150);
+            document.getElementById('spam-verdict').textContent = r.spam ? r.spam.verdict : '';
+
+            const kwContainer = document.getElementById('spam-keywords');
+            kwContainer.innerHTML = '';
+            if (r.spam && r.spam.found_keywords && r.spam.found_keywords.length > 0) {
+                r.spam.found_keywords.forEach(kw => {
+                    const tag = document.createElement('span');
+                    tag.className = 'keyword-tag';
+                    tag.textContent = kw;
+                    kwContainer.appendChild(tag);
+                });
+            }
+
+            // Clone signals
+            document.getElementById('clone-signals-text').textContent = r.clone ? r.clone.verdict : 'No clone signals detected';
+            const signalsList = document.getElementById('clone-signals-list');
+            signalsList.innerHTML = '';
+            if (r.clone && r.clone.signals && r.clone.signals.length > 0) {
+                r.clone.signals.forEach(s => {
+                    const el = document.createElement('div');
+                    el.className = 'clone-signal';
+                    el.textContent = '⚠️ ' + s;
+                    signalsList.appendChild(el);
+                });
+            }
+
+            // Show report button if fake or clone
+            const reportBtn = document.getElementById('report-btn');
+            const hasClone = r.clone && r.clone.signals && r.clone.signals.length > 0;
+            if (isFake || hasClone) {
+                reportBtn.classList.remove('hidden');
+            } else {
+                reportBtn.classList.add('hidden');
+            }
+
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('result-container').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function addToMonitorFromResult() {
+            if (!lastResult) return;
+            showMonitor();
+            document.getElementById('monitor-username').value = lastResult.data.username;
+            addToMonitor();
+        }
+
+        function showCompare() {
+            document.getElementById('compare').style.display = 'block';
+            document.getElementById('compare').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function reportAccount() {
+            if (!lastResult) return;
+            const username = lastResult.data.username;
+            const platform = lastResult.platform;
+            let url = '';
+            if (platform === 'instagram') {
+                url = `https://www.instagram.com/${username}/`;
+            } else if (platform === 'x') {
+                url = `https://twitter.com/${username}`;
+            }
+            if (url) {
+                alert(`You are being redirected to ${platform} to report @${username}. Please use the native reporting tools on their profile page.`);
+                window.open(url, '_blank');
+            }
+        }
+
+        async function runComparison() {
+            const u1 = document.getElementById('compare-user1').value.trim().replace('@', '');
+            const u2 = document.getElementById('compare-user2').value.trim().replace('@', '');
+            if (!u1 || !u2) { alert('Please enter both usernames!'); return; }
+
+            const btn = document.querySelector('.compare-btn');
+            btn.textContent = '⏳ Analyzing…';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/compare', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username1: u1, username2: u2, platform: currentPlatform })
+                });
+                const data = await response.json();
+                btn.textContent = '⚖️ Compare Both Accounts →';
+                btn.disabled = false;
+
+                if (data.error) {
+                    alert(data.error); return;
+                }
+
+                const container = document.getElementById('compare-results');
+                container.style.display = 'grid';
+
+                function miniCard(a) {
+                    const isFake = a.prediction === 'fake';
+                    const bg = isFake ? '#fde8e8' : '#d4f5e0';
+                    const pic = a.data.profile_pic_url ? '<img src="/proxy-image?url=' + encodeURIComponent(a.data.profile_pic_url) + '" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:2px solid rgba(0,0,0,0.1);">' : '<div style="width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">👤</div>';
+                    return '<div style="background:' + bg + ';border-radius:16px;padding:20px;">' +
+                        pic +
+                        '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px;">' + (isFake ? '🚨' : '✅') + ' @' + a.data.username + '</div>' +
+                        '<div style="font-size:13px;opacity:0.6;margin-bottom:12px;">' + (a.risk_level || '') + ' · ' + (a.risk_score || 0) + '/100</div>' +
+                        '<div style="background:rgba(0,0,0,0.1);border-radius:100px;height:6px;margin-bottom:12px;"><div style="width:' + (a.risk_score || 0) + '%;height:100%;background:' + (a.risk_score >= 75 ? '#e53935' : a.risk_score >= 45 ? '#f59e0b' : '#1db954') + ';border-radius:100px;"></div></div>' +
+                        '<div style="font-size:12px;display:flex;flex-direction:column;gap:4px;">' +
+                        '<div style="display:flex;justify-content:space-between;"><span style="opacity:0.6;">Followers</span><b>' + (a.data.followers || 0).toLocaleString() + '</b></div>' +
+                        '<div style="display:flex;justify-content:space-between;"><span style="opacity:0.6;">Spam Score</span><b>' + (a.spam ? a.spam.spam_score : 0) + '/100</b></div>' +
+                        '<div style="display:flex;justify-content:space-between;"><span style="opacity:0.6;">Verified</span><b>' + (a.data.is_verified ? 'Yes ✅' : 'No ❌') + '</b></div>' +
+                        '</div></div>';
+                }
+
+                let verdict = '';
+                const a1 = data.account1, a2 = data.account2;
+                if (a1.prediction === 'fake' && a2.prediction === 'real') verdict = '⚖️ @' + a2.data.username + ' appears more legitimate';
+                else if (a2.prediction === 'fake' && a1.prediction === 'real') verdict = '⚖️ @' + a1.data.username + ' appears more legitimate';
+                else if ((a1.risk_score || 0) < (a2.risk_score || 0)) verdict = '⚖️ @' + a1.data.username + ' has lower risk';
+                else if ((a2.risk_score || 0) < (a1.risk_score || 0)) verdict = '⚖️ @' + a2.data.username + ' has lower risk';
+                else verdict = '⚖️ Both accounts have similar risk profiles';
+
+                container.innerHTML = miniCard(a1) + miniCard(a2);
+                container.insertAdjacentHTML('afterend', '<div style="background:var(--black);color:white;border-radius:14px;padding:16px 20px;margin-top:12px;font-size:14px;font-weight:600;text-align:center;">' + verdict + '</div>');
+            } catch (e) {
+                btn.textContent = '⚖️ Compare Both Accounts →';
+                btn.disabled = false;
+                alert('Error connecting to server.');
+            }
+        }
+
+        async function showHistory() {
+            document.getElementById('history').style.display = 'block';
+            document.getElementById('history').scrollIntoView({ behavior: 'smooth' });
+
+            const response = await fetch('/history');
+            const data = await response.json();
+            const stats = data.stats;
+            const records = data.history;
+
+            document.getElementById('stats-cards').innerHTML =
+                '<div class="stat-card"><div class="stat-card-number">' + stats.total + '</div><div class="stat-card-label">Total Analyzed</div></div>' +
+                '<div class="stat-card"><div class="stat-card-number" style="color:#e53935">' + stats.fake_count + '</div><div class="stat-card-label">Fake Found</div></div>' +
+                '<div class="stat-card"><div class="stat-card-number" style="color:#1db954">' + stats.real_count + '</div><div class="stat-card-label">Real Accounts</div></div>' +
+                '<div class="stat-card"><div class="stat-card-number">' + stats.avg_risk + '</div><div class="stat-card-label">Avg Risk Score</div></div>';
+
+            const list = document.getElementById('history-list');
+            if (records.length === 0) {
+                list.innerHTML = '<div style="color:var(--gray-dark);font-size:14px;padding:20px 0;">No history yet — analyze some accounts!</div>';
+                return;
+            }
+
+            list.innerHTML = records.map(r => '<div class="history-item">' +
+                '<div class="history-item-left">' +
+                '<div class="history-dot ' + r.prediction + '"></div>' +
+                '<div><div class="history-username">@' + r.username + '</div><div class="history-platform">' + r.platform + '</div></div>' +
+                '</div>' +
+                '<div class="history-right">' +
+                '<span class="history-risk" style="color:' + (r.risk_score >= 75 ? '#e53935' : r.risk_score >= 45 ? '#f59e0b' : '#1db954') + '">' + r.risk_score + '/100</span>' +
+                '<span class="history-time">' + r.analyzed_at + '</span>' +
+                '</div></div>'
+            ).join('');
+        }
+
+        async function clearHistory() {
+            if (!confirm('Clear all history?')) return;
+            await fetch('/clear-history', { method: 'POST' });
+            document.getElementById('history-list').innerHTML = '<div style="color:var(--gray-dark);font-size:14px;padding:20px 0;">History cleared.</div>';
+            document.getElementById('stats-cards').innerHTML = '';
+        }
+
+        function showMonitor() {
+            document.getElementById('monitor').style.display = 'block';
+            document.getElementById('monitor').scrollIntoView({ behavior: 'smooth' });
+            loadMonitorStatus();
+        }
+
+        async function addToMonitor() {
+            const username = document.getElementById('monitor-username').value.trim().replace('@', '');
+            if (!username) { alert('Please enter a username!'); return; }
+            await fetch('/monitoring/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, platform: currentPlatform })
+            });
+            document.getElementById('monitor-username').value = '';
+            loadMonitorStatus();
+        }
+
+        async function loadMonitorStatus() {
+            const response = await fetch('/monitoring/status');
+            const data = await response.json();
+
+            const accountsContainer = document.getElementById('monitor-accounts');
+            if (data.accounts.length === 0) {
+                accountsContainer.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:14px;text-align:center;padding:20px;">No accounts being monitored yet</div>';
+            } else {
+                accountsContainer.innerHTML = data.accounts.map(a => '<div class="monitor-account-item">' +
+                    '<div><div class="monitor-account-name">@' + a.username + '</div><div class="monitor-account-meta">' + a.platform + ' · Risk: ' + (a.last_risk_score || '?') + '/100 · ' + (a.alert_count || 0) + ' alerts</div></div>' +
+                    '<button class="monitor-remove" onclick="removeFromMonitor(\'' + a.username + '\')">Remove</button>' +
+                    '</div>'
+                ).join('');
+            }
+
+            const alertsContainer = document.getElementById('alerts-list');
+            if (data.alerts.length > 0) {
+                alertsContainer.innerHTML = '<div class="alerts-title">Recent Alerts</div>' +
+                    data.alerts.map(a => '<div class="alert-item"><span class="alert-username">@' + a.username + '</span> — ' + a.message + '<div style="font-size:11px;opacity:0.5;margin-top:4px;">' + a.created_at + '</div></div>').join('');
+            } else {
+                alertsContainer.innerHTML = '<div class="alerts-title">Recent Alerts</div><div style="color:rgba(255,255,255,0.3);font-size:13px;">No alerts yet — accounts look clean! ✅</div>';
+            }
+        }
+
+        async function removeFromMonitor(username) {
+            await fetch('/monitoring/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username }) });
+            loadMonitorStatus();
+        }
+    </script>
+</body>
+
+</html>
