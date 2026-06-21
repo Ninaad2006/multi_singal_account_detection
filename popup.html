@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fake Account Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f5f0;
+            --green: #1db954;
+            --green-dark: #169c44;
+            --pink: #f4c2d0;
+            --blue: #b8d4f0;
+            --yellow: #f5e46a;
+            --red-card: #f2a49a;
+            --gray: #e8e8e3;
+            --gray-dark: #888880;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 360px;
+            font-family: var(--font-body);
+            padding: 20px;
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .header-logo-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--black);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 12px;
+        }
+
+        p.sub {
+            color: var(--gray-dark);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid rgba(0, 0, 0, 0.15);
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            background: white;
+            outline: none;
+            transition: all 0.2s;
+            color: var(--black);
+        }
+
+        input:focus {
+            border-color: var(--black);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--black);
+            background: var(--green);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: var(--green-dark);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .platform-selector {
+            display: inline-flex;
+            background: var(--gray);
+            border-radius: 100px;
+            padding: 4px;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .platform-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 100px;
+            border: none;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray-dark);
+        }
+
+        .active-instagram, .active-x {
+            background: var(--black);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .result-container {
+            margin-top: 16px;
+        }
+
+        .result-hero-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            animation: fadeUp 0.3s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-hero-card.real { background: #d4f5e0; }
+        .result-hero-card.fake { background: #fde8e8; }
+        .result-hero-card.warning { background: var(--yellow); }
+
+        .result-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .result-main { flex: 1; }
+
+        .result-verdict {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 2px;
+        }
+
+        .result-confidence {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(0,0,0,0.6);
+        }
+
+        .details-card {
+            background: white;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            animation: fadeUp 0.3s ease 0.1s both;
+        }
+
+        .details-card p {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .details-card p:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            margin: 12px 0 8px 0;
+        }
+
+        .meter-bar {
+            background: var(--gray);
+            border-radius: 100px;
+            height: 8px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 0.5s ease;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--gray-dark);
+            font-size: 14px;
+            padding: 20px;
+            font-weight: 500;
+        }
+
+        .auto-detected {
+            background: var(--blue);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        .auto-detected button {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: var(--black);
+            color: var(--white);
+        }
+        
+        .auto-detected button:hover {
+            background: #222;
+        }
+
+        .bottom-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .bottom-link a {
+            font-size: 13px;
+            color: var(--black);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .bottom-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-logo">
+        <div class="header-logo-icon">T</div>
+        TrueCheck
+    </div>
+    <p class="sub">Analyze any Instagram or X account</p>
+
+    <div id="auto-detect" style="display:none;" class="auto-detected">
+        <div>📍 <span id="detected-username"></span></div>
+        <button id="btn-analyze-detected">Analyze</button>
+    </div>
+
+    <div class="platform-selector">
+        <button class="platform-btn active-instagram" id="btn-ig">Instagram</button>
+        <button class="platform-btn" id="btn-x">𝕏 X</button>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="username" placeholder="Enter username">
+        <button id="btn-analyze">Analyze</button>
+    </div>
+
+    <div id="loading" class="loading" style="display:none;">⏳ Analyzing...</div>
+    <div id="result"></div>
+
+    <div class="bottom-link">
+        <a href="http://127.0.0.1:5004" target="_blank">
+            Open Full App ↗
+        </a>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+{
+    "manifest_version": 3,
+    "name": "Fake Account Detector",
+    "version": "1.0",
+    "description": "Detect fake Instagram and X accounts instantly",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://www.instagram.com/*",
+        "https://instagram.com/*",
+        "https://twitter.com/*",
+        "https://x.com/*",
+        "http://127.0.0.1:5004/*"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icon.png",
+            "48": "icon.png",
+            "128": "icon.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.instagram.com/*",
+                "https://instagram.com/*",
+                "https://twitter.com/*",
+                "https://x.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
