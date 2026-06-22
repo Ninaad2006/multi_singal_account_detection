@@ -21,11 +21,11 @@ CORS(app)
 
 model = pickle.load(open("fake_detector_model.pkl", "rb"))
 
-RAPIDAPI_KEY = "241acbfa2amsh04e4cb5dec6276bp13e117jsn494bed62103b"
-TWITTER_API_KEY = "40888de572mshb3bc9e40f48b372p1c6f9djsn0f0b97fb8122"
-SERPAPI_KEY = "YpQN1QAENdqQ4Wk8ZWaDkbdW"  # get free key at serpapi.com
-INSTAGRAM_HOST = "instagram120.p.rapidapi.com"
-TWITTER_HOST = "twitter-api47.p.rapidapi.com"
+RAPIDAPI_KEY = "ADD RAPIDAPI KEY"
+TWITTER_API_KEY = "ADD X API KEY"
+SERPAPI_KEY = "ADD API KEY"  # get free key at serpapi.com
+INSTAGRAM_HOST = "INSTAGRAM HOST URL"
+TWITTER_HOST = "TWITTER HOST URL"
 
 # Load face detector
 
