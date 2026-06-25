@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import re
 import cv2
+import os
 import numpy as np
 from PIL import Image
 from io import BytesIO
@@ -19,13 +20,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-model = pickle.load(open("fake_detector_model.pkl", "rb"))
+#model = pickle.load(open("fake_detector_model.pkl", "rb"))
 
-RAPIDAPI_KEY = "ADD RAPIDAPI KEY"
-TWITTER_API_KEY = "ADD X API KEY"
-SERPAPI_KEY = "ADD API KEY"  # get free key at serpapi.com
-INSTAGRAM_HOST = "INSTAGRAM HOST URL"
-TWITTER_HOST = "TWITTER HOST URL"
+
+RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
+TWITTER_API_KEY = os.getenv("TWITTER_API_KEY")
+SERPAPI_KEY = os.getenv("SERPAPI_KEY")
+
+INSTAGRAM_HOST = os.getenv("INSTAGRAM_HOST")
+TWITTER_HOST = os.getenv("TWITTER_HOST")
 
 # Load face detector
 
@@ -412,7 +415,8 @@ monitoring_thread = start_monitoring(analyze_instagram, analyze_x, interval_minu
 
 @app.route("/")
 def home():
-    return open("index.html").read()
+    with open("index.html", "r", encoding="utf-8") as f:
+        return f.read()
 
 @app.route("/predict", methods=["POST"])
 def predict():
