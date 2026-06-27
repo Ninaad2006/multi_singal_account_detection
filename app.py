@@ -23,6 +23,7 @@ CORS(app)
 #model = pickle.load(open("fake_detector_model.pkl", "rb"))
 
 
+
 RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
 TWITTER_API_KEY = os.getenv("TWITTER_API_KEY")
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
@@ -33,12 +34,17 @@ TWITTER_HOST = os.getenv("TWITTER_HOST")
 # Load face detector
 
 # Load AI image detector
-print("Loading AI detection model...")
-ai_detector = pipeline(
-    "image-classification",
-    model="umm-maybe/AI-image-detector"
-)
-print("All models loaded!")
+ai_detector = None
+
+def get_ai_detector():
+    global ai_detector
+    if ai_detector is None:
+        print("Loading AI detection model...")
+        ai_detector = pipeline(
+            "image-classification",
+            model="umm-maybe/AI-image-detector"
+        )
+    return ai_detector
 
 
 
@@ -59,7 +65,7 @@ def check_ai_generated(image_url):
         edges = cv2.Canny(gray, 100, 200)
         edge_density = np.sum(edges > 0) / edges.size
         pixel_ai_signals = sum([noise < 80, smoothness < 5, edge_density < 0.03])
-        model_result = ai_detector(img)
+        model_result = get_ai_detector()(img)
         ai_prob = next((item["score"] for item in model_result if "artificial" in item["label"].lower()), 0)
         if ai_prob > 0.75 and pixel_ai_signals >= 2:
             verdict = "🤖 Likely AI Generated (experimental)"
@@ -551,4 +557,5 @@ def monitoring_status():
     alerts = get_alerts()
     return jsonify({"accounts": accounts, "alerts": alerts})
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5004)
+    port = int(os.environ.get("PORT", 5004))
+    app.run(debug=False, host='0.0.0.0', port=port)
